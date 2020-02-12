@@ -29,7 +29,7 @@ type Author {
 }`
     expect(createFullSchema(beqmodel)).to.be.equal(expected)
   })
-  it.only('creates resolvers for references in 6eggmodel', () => {
+  it('creates resolvers for references in 6eggmodel', () => {
     const beqmodel = parse(beq)
     const expected = `{
   Book: {
