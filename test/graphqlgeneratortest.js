@@ -10,7 +10,7 @@ Book
 Author
   _id id!
   name string
-  books [Book!]!
+  books [Book!]! ref -ref opposite
 `
 
 describe('schema and resolver generator', () => {
@@ -28,6 +28,23 @@ type Author {
   books: [Book!]!
 }`
     expect(createFullSchema(beqmodel)).to.be.equal(expected)
+  })
+  it.only('creates resolvers for references in 6eggmodel', () => {
+    const beqmodel = parse(beq)
+    const expected = `{
+  Book: {
+    author(book) {
+      return Author.findById(book.author._id)
+    }
+  },
+  Author: {
+    books(author) {
+      return Book.find({author: author._id})
+    }
+  },
+}`
+    console.log('foobar', createAllResolver(beqmodel))
+    //    expect(createAllResolver(beqmodel)).to.be.equal(expected)
   })
 })
 
@@ -50,24 +67,20 @@ function createSchemaFields(type) {
 }
 
 function createSchemaField(field) {
-  return `  ${field.name}: ${getType(field)}`
+  return `  ${field.name}: ${getType(field.type)}`
 }
 
-function getType(field) {
-  const required = field.type.required ? '!' : ''
-  if (isPrim(field)) {
-    return seggTypeToGqlType[field.type.type] + required
+function getType(type) {
+  const required = type.required ? '!' : ''
+  if (isPrim(type)) {
+    return seggTypeToGqlType[type.type] + required
   }
-  if (isObject(field)) {
-    return field.type.type + required
+  if (isObject(type)) {
+    return type.type + required
   }
-  if (isArray(field)) {
-    return `[${getItemType(field)}]${required}`
+  if (isArray(type)) {
+    return `[${getType(type.itemtype)}]${required}`
   }
-}
-
-function getItemType(field) {
-  return getType({type: field.type.itemtype})
 }
 
 const seggTypeToGqlType = {
@@ -77,15 +90,41 @@ const seggTypeToGqlType = {
   id: 'String',
 }
 
-function isPrim(field) {
-  return field.type.group === 'prim'
+function isPrim(type) {
+  return type.group === 'prim'
 }
 
-function isObject(field) {
-  return field.type.group === 'object'
+function isObject(type) {
+  return type.group === 'object'
 }
 
-function isArray(field) {
-  return field.type.group === 'array'
+function isArray(type) {
+  return type.group === 'array'
 }
 
+function createAllResolver(beqmodel) {
+  return beqmodel.types.reduce((resolvers, type) => {
+    resolvers += `\n${type.name}: { \n${createResolverForType(type)} \n`
+    return resolvers
+  }, '{\n') + '\n}'
+}
+
+function createResolverForType(type) {
+  const references = type.fields.filter((f) => isReference(f.type))
+  
+  return references.reduce((resolver, reference) => {
+    resolver += `${reference.name} = (parent, arg, {dataSource}) => {
+      return dataSource[${reference.type.type}].findById(parent[${reference.name}]._id)
+    }`
+    return resolver
+  }, '\n')
+}
+
+function isReference(type) {
+  if (isObject(type)) {
+    return type.group === 'object' && type.reftype === 'ref'
+  } else if (isArray(type)) {
+    return isReference(type.itemtype)
+  }
+  return false
+}
