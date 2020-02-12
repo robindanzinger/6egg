@@ -13,7 +13,7 @@ Author
   books [Book!]!
 `
 
-describe.only('schema and resolver generator', () => {
+describe('schema and resolver generator', () => {
   it('creates simple gql schema from 6eggmodel', () => {
     const beqmodel = parse(beq)
     const expected = `type Book {
@@ -27,15 +27,19 @@ type Author {
   name: String
   books: [Book!]!
 }`
-    expect(createSchema(beqmodel)).to.be.equal(expected)
+    expect(createFullSchema(beqmodel)).to.be.equal(expected)
   })
 })
 
-function createSchema(beqmodel) {
+function createFullSchema(beqmodel) {
   return beqmodel.types.reduce((arr, type) => {
-    arr.push(`type ${type.name} {\n` + createSchemaFields(type).join('\n') + '\n}')
+    arr.push(createSchemaForType(type))
     return arr
   }, []).join('\n\n')
+}
+
+function createSchemaForType(type) {
+  return `type ${type.name} {\n${createSchemaFields(type).join('\n')}\n}`
 }
 
 function createSchemaFields(type) {
