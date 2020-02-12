@@ -24,7 +24,7 @@
   "scripts": {
     "test": "mocha",
     "watch": "mocha --watch --watch-ignore dbtest --watch-files src --watch-files test",
-    "lint": "eslint --fix --ext .js src/. test/."
+    "lint": "eslint --fix --ext .js test/."
   },
   "repository": {
     "type": "git",

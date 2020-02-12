@@ -17,8 +17,7 @@ Adress embed
   street string!
   city string!
 `
-
-    parse(model)
+    console.dir(parse(model), {depth: null})
   })
 })
 describe('parseField', function () {
@@ -179,10 +178,8 @@ function parse(model) {
     if (line.trim() === '') return type
     const values = line.split(' ')
     if (values[0] !== '') {
-      if (type) {
-        m.types.push(type)
-      }
       type = parseType(values)
+      m.types.push(type)
     } else {
       type.fields.push(parseField(values))
     }
