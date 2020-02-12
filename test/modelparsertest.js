@@ -4,15 +4,16 @@ const { parse, parseField } = require('../src/modelparser')
 describe('6egg model parser', function () {
   it('can read types', async function () {
     const model = `
-User 
+Author 
   _id id
   name string!
   addresses [Adress] embed
+  books [Book] ref
 
 Book
   _id id
   title string!
-  author User! ref
+  author Author! ref
 
 Adress embed
   street string!
