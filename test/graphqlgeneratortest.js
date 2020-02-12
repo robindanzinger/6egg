@@ -10,7 +10,7 @@ Book
 Author
   _id id!
   name string
-  books [Book!]! ref -ref opposite
+  books [Book!]! ref -oppositeidfield author
 `
 
 describe('schema and resolver generator', () => {
@@ -111,13 +111,31 @@ function createAllResolver(beqmodel) {
 
 function createResolverForType(type) {
   const references = type.fields.filter((f) => isReference(f.type))
-  
-  return references.reduce((resolver, reference) => {
-    resolver += `${reference.name} = (parent, arg, {dataSource}) => {
-      return dataSource[${reference.type.type}].findById(parent[${reference.name}]._id)
+  const objectreferences = references.filter(r => isObject(r.type))
+  const arrayreferences = references.filter(r => isArray(r.type))
+  let result = createResolverForObjectReferences(objectreferences)
+  return result + '\n' + createResolverForArrayReferences(arrayreferences)
+}
+
+function createResolverForObjectReferences(references) {
+  return references.map(createResolverForObjectReference).join('\n')
+}
+
+function createResolverForObjectReference(reference) {
+  return `${reference.name} = (parent, arg, {dataSource}) => {
+  return dataSource[${reference.type.type}].findById(parent[${reference.name}]._id)
+}`
+}
+
+function createResolverForArrayReferences(references) {
+  return references.map(createResolverForArrayReference).join('\n')
+}
+
+function createResolverForArrayReference(reference) {
+  const itemtype = reference.type.itemtype
+  return `${reference.name}(parent, arg, {dataSource}) => {
+      return dataSource[${itemtype.type}].find({${reference.options.oppositeidfield}: parent._id})
     }`
-    return resolver
-  }, '\n')
 }
 
 function isReference(type) {
