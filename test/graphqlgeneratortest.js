@@ -33,18 +33,18 @@ type Author {
     const beqmodel = parse(beq)
     const expected = `{
   Book: {
-    author(book) {
-      return Author.findById(book.author._id)
-    }
+    author(parent, arg, {dataSource}) => {
+      return dataSource.Author.findById(parent.author._id)
+    })
   },
   Author: {
-    books(author) {
-      return Book.find({author: author._id})
-    }
+    books(parent, arg, {dataSource}) => {
+      return dataSource.Book.find({author: parent._id})
+    })
   },
 }`
     console.log('foobar', createAllResolver(beqmodel))
-    //    expect(createAllResolver(beqmodel)).to.be.equal(expected)
+    expect(createAllResolver(beqmodel)).to.be.equal(expected)
   })
 })
 
@@ -104,9 +104,8 @@ function isArray(type) {
 
 function createAllResolver(beqmodel) {
   return beqmodel.types.reduce((resolvers, type) => {
-    resolvers += `\n${type.name}: { \n${createResolverForType(type)} \n`
-    return resolvers
-  }, '{\n') + '\n}'
+    return resolvers += createResolverForType(type)
+  }, '{') + '\n}'
 }
 
 function createResolverForType(type) {
@@ -114,7 +113,10 @@ function createResolverForType(type) {
   const objectreferences = references.filter(r => isObject(r.type))
   const arrayreferences = references.filter(r => isArray(r.type))
   let result = createResolverForObjectReferences(objectreferences)
-  return result + '\n' + createResolverForArrayReferences(arrayreferences)
+  let resultString = result ? `\n    ${result}` : '' 
+  let arrayRefs = createResolverForArrayReferences(arrayreferences)
+  let arrayRefsString = arrayRefs ? `\n    ${arrayRefs}` : ''
+  return `\n  ${type.name}: {${resultString}${arrayRefsString}\n  },`
 }
 
 function createResolverForObjectReferences(references) {
@@ -122,9 +124,9 @@ function createResolverForObjectReferences(references) {
 }
 
 function createResolverForObjectReference(reference) {
-  return `${reference.name} = (parent, arg, {dataSource}) => {
-  return dataSource[${reference.type.type}].findById(parent[${reference.name}]._id)
-}`
+  return `${reference.name}(parent, arg, {dataSource}) => {
+      return dataSource.${reference.type.type}.findById(parent.${reference.name}._id)
+    })`
 }
 
 function createResolverForArrayReferences(references) {
@@ -134,8 +136,8 @@ function createResolverForArrayReferences(references) {
 function createResolverForArrayReference(reference) {
   const itemtype = reference.type.itemtype
   return `${reference.name}(parent, arg, {dataSource}) => {
-      return dataSource[${itemtype.type}].find({${reference.options.oppositeidfield}: parent._id})
-    }`
+      return dataSource.${itemtype.type}.find({${reference.options.oppositeidfield}: parent._id})
+    })`
 }
 
 function isReference(type) {
