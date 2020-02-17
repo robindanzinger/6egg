@@ -1,20 +1,20 @@
-function isPrim(type) {
-  return type.group === 'prim'
+function isPrim(field) {
+  return field.group === 'prim'
 }
 
-function isObject(type) {
-  return type.group === 'object'
+function isObject(field) {
+  return field.group === 'object'
 }
 
-function isArray(type) {
-  return type.group === 'array'
+function isArray(field) {
+  return field.group === 'array'
 }
 
-function isReference(type) {
-  if (isObject(type)) {
-    return type.group === 'object' && type.reftype === 'ref'
-  } else if (isArray(type)) {
-    return isReference(type.itemtype)
+function isReference(field) {
+  if (isObject(field)) {
+    return field.group === 'object' && field.reftype === 'ref'
+  } else if (isArray(field)) {
+    return isReference(field.itemtype)
   }
   return false
 }

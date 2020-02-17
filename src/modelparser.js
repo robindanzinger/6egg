@@ -7,7 +7,7 @@ function parse(model) {
     if (line.trim() === '') return type
     const values = line.split(' ')
     if (values[0] !== '') {
-      type = parseType(values)
+      type = parseObject(values)
       m.types.push(type)
     } else {
       type.fields.push(parseField(values))
@@ -18,7 +18,7 @@ function parse(model) {
   return m
 }
 
-function parseType(values) {
+function parseObject(values) {
   return {
     name: values[0],
     type: values[1] || 'base',
@@ -28,10 +28,10 @@ function parseType(values) {
 
 function parseField(values) {
   const fvalues = values.filter(v => v !== '')
-  const name = fvalues[0]
-  const type = parseFieldType(fvalues[1], fvalues)
-  const options = parseOptions(fvalues)
-  return {name, type, options}
+  const type  = parseFieldType(fvalues[1], fvalues)
+  type.name = fvalues[0]
+  type.options = parseOptions(fvalues)
+  return type
 }
 
 function parseFieldType(value, values) {
@@ -92,6 +92,5 @@ function parseOptions(values) {
 
 module.exports = {
   parse,
-  parseField,
-  parseType
+  parseField
 }

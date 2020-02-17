@@ -9,10 +9,10 @@ function createFullSchema(beggmodel) {
   }, []).join('\n\n')
 }
 
-function createSchema(type) {
+function createSchema(object) {
   return `\
-type ${type.name} {
-${createSchemaFields(type)}
+type ${object.name} {
+${createSchemaFields(object)}
 }`
 }
 
@@ -21,19 +21,19 @@ function createSchemaFields(type) {
 }
 
 function createSchemaField(field) {
-  return `  ${field.name}: ${getType(field.type)}`
+  return `  ${field.name}: ${getType(field)}`
 }
 
-function getType(type) {
-  const required = type.required ? '!' : ''
-  if (isPrim(type)) {
-    return beggTypeToGqlType[type.type] + required
+function getType(field) {
+  const required = field.required ? '!' : ''
+  if (isPrim(field)) {
+    return beggTypeToGqlType[field.type] + required
   }
-  if (isObject(type)) {
-    return type.type + required
+  if (isObject(field)) {
+    return field.type + required
   }
-  if (isArray(type)) {
-    return `[${getType(type.itemtype)}]${required}`
+  if (isArray(field)) {
+    return `[${getType(field.itemtype)}]${required}`
   }
 }
 

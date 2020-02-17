@@ -3,18 +3,18 @@ function createAllResolver(beggmodel) {
   return '{\n' + beggmodel.types.map(createResolver).join('\n') + '\n}'
 }
 
-function createResolver(type) {
-  const references = type.fields.filter((f) => isReference(f.type))
+function createResolver(object) {
+  const references = object.fields.filter(isReference)
   const referencesResolverString = references.map(createResolverForReference)
-  return `${type.name}: {
+  return `${object.name}: {
 ${referencesResolverString.join('\n')}\n},`
 }
 
 function createResolverForReference(reference) {
-  if (isObject(reference.type)) {
+  if (isObject(reference)) {
     return createResolverForObjectReference(reference)
   } 
-  if (isArray(reference.type)) {
+  if (isArray(reference)) {
     return createResolverForArrayReference(reference)
   }
   return undefined
@@ -23,12 +23,12 @@ function createResolverForReference(reference) {
 function createResolverForObjectReference(reference) {
   return `\
 ${reference.name}(parent, arg, {dataSource}) => {
-  return dataSource.${reference.type.type}.findById(parent.${reference.name}._id)
+  return dataSource.${reference.type}.findById(parent.${reference.name}._id)
 })`
 }
 
 function createResolverForArrayReference(reference) {
-  const itemtype = reference.type.itemtype
+  const itemtype = reference.itemtype
   return `\
 ${reference.name}(parent, arg, {dataSource}) => {
   return dataSource.${itemtype.type}.find({${reference.options.oppositeidfield}: parent._id})
