@@ -1,6 +1,6 @@
 const { expect } = require('chai')
-const { parse } = require('../src/modelparser')
-const { createFullSchema } = require('../src/converter/gqlschema')
+const { parse } = require('../../src/modelparser')
+const { createFullSchema } = require('../../src/converter/gqlschema')
 
 const begg = `
 Book

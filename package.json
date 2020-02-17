@@ -22,8 +22,8 @@
     "mocha": "^7.0.1"
   },
   "scripts": {
-    "test": "mocha",
-    "watch": "mocha --watch --watch-ignore dbtest --watch-files src --watch-files test",
+    "test": "mocha --recursive",
+    "watch": "mocha --recursive --watch --watch-ignore dbtest --watch-files src --watch-files test",
     "lint": "eslint --fix --ext .js src/. test/."
   },
   "repository": {

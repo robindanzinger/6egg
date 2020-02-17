@@ -1,6 +1,5 @@
 const { expect } = require('chai')
-const { parse } = require('../src/modelparser')
-const { createAllResolver } = require('../src/converter/gqlresolver')
+const { parse } = require('../../src/modelparser')
 
 const begg = `
 Book
@@ -14,8 +13,8 @@ Author
   books [Book!]! ref -oppositeidfield author
 `
 
-describe('gql resolver generator', () => {
-  it('creates resolvers for simple 6egg model', () => {
+describe('mongoose schema generator', () => {
+  it.skip('creates schema for simple 6egg model', () => {
     const beggmodel = parse(begg)
     const expected = `\
 {
@@ -30,7 +29,7 @@ books(parent, arg, {dataSource}) => {
 })
 },
 }`
-    expect(createAllResolver(beggmodel)).to.be.equal(expected)
+    //    expect(createFullSchema(beggmodel)).to.be.equal(expected)
   })
 })
 
