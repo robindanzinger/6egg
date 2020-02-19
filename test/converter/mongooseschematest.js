@@ -23,7 +23,7 @@ Author
 `
 
 describe('mongoose schema generator', () => {
-  it.only('creates schema for simple 6egg model', () => {
+  it('creates schema for simple 6egg model', () => {
     const beggmodel = parse(begg)
     const expected = `\
 const { Schema, model, models } = require('mongoose')

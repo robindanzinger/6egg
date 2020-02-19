@@ -22,17 +22,17 @@ function createResolverForReference(reference) {
 
 function createResolverForObjectReference(reference) {
   return `\
-${reference.name}(parent, arg, {dataSource}) => {
+${reference.name}(parent, arg, {dataSource}) {
   return dataSource.${reference.type}.findById(parent.${reference.name}._id)
-})`
+}`
 }
 
 function createResolverForArrayReference(reference) {
   const itemtype = reference.itemtype
   return `\
-${reference.name}(parent, arg, {dataSource}) => {
+${reference.name}(parent, arg, {dataSource}) {
   return dataSource.${itemtype.type}.find({${reference.options.oppositeidfield}: parent._id})
-})`
+}`
 }
 
 module.exports = {

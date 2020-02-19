@@ -20,14 +20,14 @@ describe('gql resolver generator', () => {
     const expected = `\
 {
 Book: {
-author(parent, arg, {dataSource}) => {
+author(parent, arg, {dataSource}) {
   return dataSource.Author.findById(parent.author._id)
-})
+}
 },
 Author: {
-books(parent, arg, {dataSource}) => {
+books(parent, arg, {dataSource}) {
   return dataSource.Book.find({author: parent._id})
-})
+}
 },
 }`
     expect(createAllResolver(beggmodel)).to.be.equal(expected)
