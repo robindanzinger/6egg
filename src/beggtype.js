@@ -19,9 +19,19 @@ function isReference(field) {
   return false
 }
 
+function isEmbed(field) {
+  if (isObject(field)) {
+    return field.reftype === 'embed'
+  } else if (isArray(field)) {
+    return isEmbed(field.itemtype)
+  }
+  return false
+}
+
 module.exports = {
   isPrim,
   isObject,
   isArray,
   isReference,
+  isEmbed,
 }

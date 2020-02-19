@@ -7,7 +7,7 @@ describe('6egg model parser', function () {
 Author 
   _id id
   name string!
-  addresses [Adress] embed
+  addresses [Address] embed
   books [Book] ref
 
 Book
@@ -15,7 +15,7 @@ Book
   title string!
   author Author! ref
 
-Adress embed
+Address embed
   street string!
   city string!
 `

@@ -1,10 +1,10 @@
-const { isPrim, isObject, isArray, isReference } = require('../beggtype')
+const { isPrim, isArray, isReference, isEmbed } = require('../beggtype')
 
 function createFullSchema(beggmodel) {
   const pre = 'const { Schema, model, models } = require(\'mongoose\')\n\n'
 
   const schemas = beggmodel.types.map(createSchema).join('\n')
-  const exports = `\n\nmodule.exports = {\n${beggmodel.types.map(exportSchema).join(',\n')}\n}`
+  const exports = `\n\nmodule.exports = {\n${createExportSchemas(beggmodel).join(',\n')}\n}`
   return pre + schemas + exports
 }
 
@@ -24,6 +24,12 @@ function createSchemaField(field) {
 }
 
 function toMongooseSchemaType(field) {
+  if (isEmbed(field)) {
+    if (isArray(field)) {
+      return `[${field.itemtype.type}Schema]`
+    }
+    return `${field.type}Schema`
+  }
   return `{ type: ${getType(field)}, required: ${isRequired(field)} }`
 }
 
@@ -41,6 +47,10 @@ function getType(field) {
     }
     return `Schema.Types.ObjectId, ref: '${field.type}'` 
   }
+}
+
+function createExportSchemas(beggmodel) {
+  return beggmodel.types.filter(t => t.type === 'base').map(exportSchema)
 }
 
 function exportSchema(begg) {
