@@ -61,13 +61,10 @@ const beggTypeToMongooseType = {
   id: 'Schema.Types.ObjectId',
   string: 'String',
   number: 'Number',
+  float: 'Number',
   date: 'Date',
   buffer: 'Buffer',
-  boolean: 'Boolean',
-  mixed: 'Schema.Types.Mixed',
-  array: 'Schema.Types.Array',
-  decimal128: 'Schema.Types.Decimal128',
-  map: 'Map',
+  bool: 'Boolean',
 }
 
 module.exports = {

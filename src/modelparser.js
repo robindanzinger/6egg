@@ -4,7 +4,9 @@ function parse(model) {
     types: [],
   }
   lines.reduce((type, line) => {
-    if (line.trim() === '') return type
+    if (line.trim() === '') {
+      return type
+    }
     const values = line.split(' ')
     if (values[0] !== '') {
       type = parseObject(values)
@@ -13,7 +15,7 @@ function parse(model) {
       type.fields.push(parseField(values))
     }
     return type
-  })
+  }, null)
 
   return m
 }

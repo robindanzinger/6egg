@@ -2,7 +2,7 @@ const { expect } = require('chai')
 const { parse, parseField } = require('../src/modelparser')
 
 describe('6egg model parser', function () {
-  it('can read types', async function () {
+  it.skip('can read types, we should use snapshottest here', async function () {
     const model = `
 Author 
   _id id
