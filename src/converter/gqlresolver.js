@@ -7,7 +7,7 @@ function createResolver(object) {
   const references = object.fields.filter(isReference)
   const referencesResolverString = references.map(createResolverForReference)
   return `${object.name}: {
-${referencesResolverString.join('\n')}\n},`
+${referencesResolverString.join(',\n')}\n},`
 }
 
 function createResolverForReference(reference) {

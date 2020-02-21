@@ -12,6 +12,7 @@ Author
   _id id!
   name string
   books [Book!]! ref -oppositeidfield author
+  favouriteBook Book ref
 `
 
 describe('gql resolver generator', () => {
@@ -27,6 +28,9 @@ author(parent, arg, {dataSources}) {
 Author: {
 books(parent, arg, {dataSources}) {
   return dataSources.Book.find({author: parent._id})
+},
+favouriteBook(parent, arg, {dataSources}) {
+  return dataSources.Book.findById(parent.favouriteBook._id)
 }
 },
 }`
