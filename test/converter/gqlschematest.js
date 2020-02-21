@@ -7,6 +7,7 @@ Book
   _id id!
   title string!
   author Author! ref 
+  price float
 
 Author
   _id id!
@@ -22,6 +23,7 @@ type Book {
   _id: String!
   title: String!
   author: Author!
+  price: Float
 }
 
 type Author {
