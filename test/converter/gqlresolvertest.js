@@ -20,13 +20,13 @@ describe('gql resolver generator', () => {
     const expected = `\
 {
 Book: {
-author(parent, arg, {dataSource}) {
-  return dataSource.Author.findById(parent.author._id)
+author(parent, arg, {dataSources}) {
+  return dataSources.Author.findById(parent.author._id)
 }
 },
 Author: {
-books(parent, arg, {dataSource}) {
-  return dataSource.Book.find({author: parent._id})
+books(parent, arg, {dataSources}) {
+  return dataSources.Book.find({author: parent._id})
 }
 },
 }`
