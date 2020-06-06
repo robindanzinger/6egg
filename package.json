@@ -7,7 +7,7 @@
     "test": "test"
   },
   "dependencies": {
-    "apollo-server-express": "^2.10.0",
+    "apollo-server-express": "^2.14.2",
     "apollo-server-testing": "^2.10.0",
     "chadomatcher": "^0.0.1",
     "eslint": "^6.8.0",
